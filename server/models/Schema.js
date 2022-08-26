@@ -66,7 +66,7 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args) {
                 return getAppliedJobs(args.ids)
             }
-        }
+        },
 
     },
 });

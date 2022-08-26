@@ -65,7 +65,7 @@ router.post("/login", (req, res, next) => {
         console.log(val);
         bcrypt.compare(req.body.password, val.password).then(val => {
             console.log("user is authorizeed")
-            res.send({id: val._id, status: true, username: val.username, companyName: val.companyName});
+            res.send({id: val._id, status: true, username: val.username, city: val.city});
         })
     })
 });
