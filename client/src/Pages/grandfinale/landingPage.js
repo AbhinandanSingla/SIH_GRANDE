@@ -1,13 +1,23 @@
 import './landingPage.css'
 import logo from '../../Assets/Images/common/logo.svg';
 import {useQuery} from "@apollo/client";
-import {getcompanyJob, getJob} from "../../graphql/queries";
-import {useState} from "react";
+import {getcompanyJob, getJob, getJobDescription} from "../../graphql/queries";
+import {useEffect, useState} from "react";
 
 export const LandingPage = () => {
     const {data} = useQuery(getJob)
-    const [bookmarkList, setBookmark] = useState([]);
+    const [id, setID] = useState('')
+    const desc = useQuery(getJobDescription, {
+        variables: {
+            id: id,
+        }
+    });
 
+    function descContainer(id) {
+        desc.refetch({id: id}).then(r => console.log(desc.data))
+    }
+
+    const [bookmarkList, setBookmark] = useState([]);
     return (<>
         <div className="navbar">
             <div className="max_width">
@@ -327,7 +337,7 @@ export const LandingPage = () => {
                                             15 Posts Avaible
                                         </div>
                                         <div className="j">
-                                            ₹ 10,000-{val.SalaryRange}
+                                            ₹{val.SalaryRange}
                                         </div>
                                     </div>
                                 </div>
@@ -353,7 +363,7 @@ export const LandingPage = () => {
                                             />
                                         </svg>
                                 }
-                                <div className="jdetail">
+                                <div className="jdetail" onClick={() => setID(val._id)}>
                                     view Details
                                 </div>
                             </div>
@@ -379,12 +389,22 @@ export const LandingPage = () => {
                             </div>
                         </div>
                         <div className="modalDesc">
-                            Minimum Qualification: Bachelor
-                            Experience Level: Mid level
-                            Experience Length: 2 years
-                            Location: San Francisco, USA
-                            Application Deadline: 12/08/2022
-                            Salary Range: $ 105,000 - 150,000
+                            <div className="mfield">
+                                Minimum Qualification: Bachelor
+                            </div>
+                            <div className="mfield">
+                                Experience Length: 2 years
+                            </div>
+                            <div className="mfield">
+                                Location: San Francisco, USA
+                            </div>
+                            <div className="mfield">
+                                Application Deadline: 12/08/2022
+                            </div>
+                            <div className="mfield">
+                                Salary Range: $ 105,000 - 150,000
+                            </div>
+
                         </div>
                     </div>
                 </div>

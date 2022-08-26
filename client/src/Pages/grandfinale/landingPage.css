@@ -265,6 +265,7 @@
 }
 
 .background {
+    display: none;
     position: fixed;
     width: 100%;
     height: 100vh;
@@ -283,31 +284,43 @@
 }
 
 .companyName {
-    font-size: 1.5rem;
+    color: #fff;
+    font-size: 1.8rem;
     background: var(--color);
+    text-align: center;
+    padding: 2rem;
 }
 
 .m_btn {
+    color: #fff;
     display: inline;
     padding: 2rem 4rem;
-    font-size: 1.7rem;
+    font-size: 1.3rem;
     background: var(--color);
     border-radius: 10px;
-
+    margin-left: 1rem;
 }
 
 .v_btn {
+    font-size: 1.3rem;
     padding: 2rem 4rem;
     display: inline;
     border: 1px solid #AAAAAA;
     border-radius: 10px;
-
 }
 
 .modalbtns {
-
     margin-top: 3rem;
     width: 100%;
     display: flex;
     justify-content: center;
+}
+
+.modalDesc {
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+.mfield {
+    font-size: 1.6rem;
 }
