@@ -378,6 +378,14 @@ export const LandingPage = () => {
                                 Apply This Job
                             </div>
                         </div>
+                        <div className="modalDesc">
+                            Minimum Qualification: Bachelor
+                            Experience Level: Mid level
+                            Experience Length: 2 years
+                            Location: San Francisco, USA
+                            Application Deadline: 12/08/2022
+                            Salary Range: $ 105,000 - 150,000
+                        </div>
                     </div>
                 </div>
             </div>

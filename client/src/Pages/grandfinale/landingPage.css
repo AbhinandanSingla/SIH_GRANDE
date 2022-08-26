@@ -292,10 +292,22 @@
     padding: 2rem 4rem;
     font-size: 1.7rem;
     background: var(--color);
+    border-radius: 10px;
+
 }
 
 .v_btn {
+    padding: 2rem 4rem;
     display: inline;
     border: 1px solid #AAAAAA;
     border-radius: 10px;
+
+}
+
+.modalbtns {
+
+    margin-top: 3rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
