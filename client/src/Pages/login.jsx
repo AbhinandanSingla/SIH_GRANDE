@@ -32,9 +32,9 @@ export function Login() {
                     }
                 } else {
                     const data = await response.json()
-                    // setUserContext(oldValues => {
-                    //     return {...oldValues, token: data.token, userLogin: true, id: data.id}
-                    // });
+                    setUserContext(oldValues => {
+                        return {...oldValues, userLogin: true, id: data.id}
+                    });
 
                     setIsSubmitted(true);
                     navigate('/');
