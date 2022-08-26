@@ -35,6 +35,33 @@ const geoCode = async (address1, address2) => {
 //   console.log(await geoCode("Chittoor", "Patiala"));
 // })();
 
+const stringToNumber = (str) => {
+  let list = [];
+  for (let i = 0; i < str.length; i++) {
+    list.push(str[i]);
+  }
+  // console.log(list);
+  let num1 = 0;
+  let num2 = 0;
+  let flag = 0;
+  for (let i = 0; i < list.length; i++) {
+    let data = parseInt(list[i]);
+    if (isNaN(data) && flag == 1) {
+      break;
+    }
+    if (flag == 1) {
+      num2 = num2 * 10 + data;
+    }
+    if (isNaN(data) && flag == 0) {
+      flag = 1;
+    }
+    if (flag == 0) {
+      num1 = num1 * 10 + data;
+    }
+  }
+  return [num1, num2];
+};
+
 const sorter = async (residence, destinations, salaries, ids) => {
   let dis = [];
   let hash = [];
@@ -139,6 +166,9 @@ const integratedValue = async (residence, data) => {
     destinations.push(data[i].jobLocation);
     ids.push(data[i]._id);
     salaries.push(data[i].SalaryRange);
+  }
+  for (let i = 0; i < data.length; i++) {
+    salaries[i] = stringToNumber(salaries[i]);
   }
   percentage = await percentGetter(residence, destinations, salaries);
   new_data = { _100: [], _75: [], _50: [], _25: [] };
