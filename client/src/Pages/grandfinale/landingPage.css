@@ -1,0 +1,182 @@
+
+:root {
+    --color: #6083FE
+}
+
+.navbar .max_width {
+    padding: 1rem 4rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.nav_logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+.nav_btns {
+    display: flex;
+}
+
+.nav_btn {
+    border-radius: 1rem;
+    padding: 1rem 3rem;
+    font-size: 1.5rem;
+    background: var(--color);
+    color: #fff;
+    margin-right: 2rem;
+}
+
+.home .max_width {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.h_heading {
+    margin-top: 5rem;
+    font-size: 5rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.h_heading span {
+    color: var(--color);
+}
+
+.sub_heading {
+    font-size: 20px;
+    font-weight: 400;
+    margin: 2rem 0;
+}
+
+.jobSearchContainer {
+    margin-top: 2rem;
+    padding: 2rem;
+    width: 50rem;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.06);
+
+}
+
+.jsc_heading {
+    padding: 1rem 0;
+    font-size: 2rem;
+}
+
+.jsc_heading span {
+    color: var(--color);
+}
+
+.jsc_searchbar {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-around;
+    border: 1px solid #EAEDEF;
+    margin: 1rem 0;
+}
+
+.jsc_searchbar input {
+    width: 100%;
+    border: none;
+    margin-left: 0.5rem;
+}
+
+.dflex {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.jsc_location {
+    width: 90%;
+    display: flex;
+    border: 1px solid #EAEDEF;
+    padding: 0.5rem 0;
+}
+
+.jsc_location input {
+    width: 100%;
+    border: none;
+}
+
+.jsc_search {
+    font-size: 1.8rem;
+    margin-top: 1.5rem;
+    display: inline-block;
+    padding: 1rem 3rem;
+    color: #fff;
+    background: var(--color);
+    border-radius: 1rem;
+}
+
+.solution .max_width {
+    margin-top: 6rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #F6F7FC;
+    padding: 6rem 0;
+
+}
+
+.sol_heading {
+    text-align: center;
+    letter-spacing: 1px;
+    font-weight: 800;
+    font-size: 3rem;
+    padding: 2rem 0;
+    font-family: var(--OpenSans);
+}
+
+.sol_heading span {
+    color: var(--color);
+}
+
+.solContainer {
+    display: flex;
+    row-gap: 4rem;
+    column-gap: 2rem;
+    flex-wrap: wrap;
+    padding: 3rem 5rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.sol_card:hover {
+    background: #6083FE;
+    color: #fff;
+}
+
+.sol_card {
+    text-align: center;
+    width: 30rem;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+    padding: 3rem;
+}
+
+.sol_sub {
+    margin-top: 1rem;
+}
+
+.sol_flex {
+    display: flex;
+}
+
+.sol_head {
+    margin-left: 2rem;
+    font-size: 1.4rem;
+}
+.job_div{
+    border-radius:1rem;
+
+}
