@@ -176,7 +176,89 @@
     margin-left: 2rem;
     font-size: 1.4rem;
 }
-.job_div{
-    border-radius:1rem;
 
+.job_head {
+    font-size: 2rem;
+    padding: 2rem 0;
+}
+
+.jobs .max_width {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+}
+
+.jobcardinfo {
+    margin-left: 2rem;
+}
+
+.job_navbts button {
+    padding: 1rem 2rem;
+    font-size: 1.8rem;
+}
+
+.jobcard {
+    display: flex;
+}
+
+.job_org {
+    font-size: 1.6rem;
+}
+
+.job_title {
+    padding: 1rem 0;
+    font-size: 1.8rem;
+}
+
+.jobsContainer {
+    width: 100%;
+    row-gap: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.jobcard {
+    width: 90%;
+    padding: 1.5rem;
+    border: 1px solid #EFEFF0;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.job_ad {
+    display: flex;
+    align-items: end;
+}
+
+.j {
+    padding-right: 2rem;
+}
+
+.jrightcontainer {
+    display: flex;
+    align-items: center;
+}
+
+.jdetail {
+    margin: 0 2rem;
+    height: 4rem;
+    display: inline-block;
+    padding: 1rem 4rem;
+    color: #fff;
+    background: var(--color);
+    border-radius: 1rem;
+}
+
+.viewMore {
+    font-size: 1.8rem;
+    padding: 1rem 2rem;
+    background: var(--color);
+    color: #fff;
+    border-radius: 1rem;
+    margin: 3rem 0;
 }
