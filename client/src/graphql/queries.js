@@ -8,7 +8,7 @@ export const getJob = gql`
             jobTitle,
             SalaryRange,
             jobLocation,
-            companyName
+            companyName,
         }
     }
 `
