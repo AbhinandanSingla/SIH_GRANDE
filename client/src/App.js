@@ -33,12 +33,13 @@ import {UserContext} from "./hooks/userContext";
 import {Registerc} from "./Pages/Components/company/register"
 import {Logincompany} from "./Pages/Components/company/login"
 import {LandingPage} from "./Pages/grandfinale/landingPage";
+import {AddJob} from "./Pages/grandfinale/addJob";
 
 
 // import {Admin} from "./Pages/admin";
 const ProtectedRoute = ({user, children}) => {
-    if (!user.token) {
-        return <Navigate to="/login" replace/>;
+    if (!user.companyLogin) {
+        return <Navigate to="/company/login" replace/>;
     }
     return children;
 }
@@ -54,6 +55,7 @@ function App() {
 
 
                 <Route path="/login" element={<Login/>}/>
+                {/*<Route path="/addJob" element={<AddJob/>}/>*/}
                 {/*<Route path="/company" element={<Company/>}/>*/}
                 <Route path="/register" element={<Register/>}/>
                 {/*<Route path="/profile" element={<Profilesection/>}/>*/}
@@ -62,11 +64,11 @@ function App() {
                 <Route path="/company/register" element={<Registerc/>}/>
                 <Route path="/company/login" element={<Logincompany/>}/>
                 {/*<Route path="/compare" element={<Compare/>}/>*/}
-                {/*<Route path="/compare"  element={<ProtectedRoute user={userContext}>*/}
-                {/*            <Compare/>*/}
-                {/*        </ProtectedRoute>*/}
-                {/*    }*/}
-                {/*/>*/}
+                <Route path="/addJob" element={<ProtectedRoute user={userContext}>
+                    <AddJob/>
+                </ProtectedRoute>
+                }
+                />
 
                 {/*<Route path={'/resume'} element={<StudentResume/>}/>*/}
                 {/*<Route path={'resume/heading'} element={<ResumeHeading/>}/>*/}

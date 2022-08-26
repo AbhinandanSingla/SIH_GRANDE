@@ -46,7 +46,7 @@ export const Logincompany = () => {
                         return {...oldValues, ...data, companyLogin: true}
                     });
                     setIsSubmitted(true);
-                    navigate('/company');
+                    navigate('/addJob');
                 }
             })
             .catch(error => {

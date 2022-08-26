@@ -48,7 +48,7 @@ export const LandingPage = () => {
             <div className="max_width">
                 <div className="nav_logo">
                     <img src={logo} alt=""/>
-                    Rojgar
+                    Rozgar
                 </div>
                 <div className="nav_btns">
                     <Link to={'/login'} className="nav_btn">
@@ -113,7 +113,7 @@ export const LandingPage = () => {
                                     d="M11.8 1C8.93566 1 6.18864 2.13785 4.16325 4.16325C2.13785 6.18864 1 8.93566 1 11.8C1 14.3542 1.5427 16.0255 3.025 17.875L11.8 28L20.575 17.875C22.0573 16.0255 22.6 14.3542 22.6 11.8C22.6 8.93566 21.4621 6.18864 19.4368 4.16325C17.4114 2.13785 14.6643 1 11.8 1V1Z"
                                     stroke="#878787" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            <input type="text"/>
+                            <input type="text" placeholder={"Location"}/>
                         </div>
                         <div className="jsc_location">
                             <svg width="29" height="30" viewBox="0 0 29 30" fill="none"
@@ -130,7 +130,7 @@ export const LandingPage = () => {
                                 </defs>
                             </svg>
 
-                            <input type="text"/>
+                            <input type="text" placeholder={"Salary"}/>
                         </div>
                     </div>
                     <div className="jsc_search">Search</div>
