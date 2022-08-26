@@ -3,18 +3,25 @@ import logo from '../../Assets/Images/common/logo.svg';
 import {useQuery} from "@apollo/client";
 import {getcompanyJob, getJob, getJobDescription} from "../../graphql/queries";
 import {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
 
 export const LandingPage = () => {
     const {data} = useQuery(getJob)
-    const [id, setID] = useState('')
+    const [description, setDesc] = useState({})
+    const [bool, setBool] = useState(false);
     const desc = useQuery(getJobDescription, {
         variables: {
-            id: id,
+            id: '',
         }
     });
 
     function descContainer(id) {
-        desc.refetch({id: id}).then(r => console.log(desc.data))
+        console.log(id)
+        setBool(true)
+        desc.refetch({id: id}).then(r => {
+            console.log(r)
+            setDesc(r.data.jobDesc);
+        })
     }
 
     const [bookmarkList, setBookmark] = useState([]);
@@ -26,12 +33,12 @@ export const LandingPage = () => {
                     Rojgar
                 </div>
                 <div className="nav_btns">
-                    <div className="nav_btn">
+                    <Link to={'/login'} className="nav_btn">
                         Login
-                    </div>
-                    <div className="nav_btn">
+                    </Link>
+                    <Link to={"/register"} className="nav_btn">
                         Register
-                    </div>
+                    </Link>
                 </div>
             </div>
         </div>
@@ -363,7 +370,7 @@ export const LandingPage = () => {
                                             />
                                         </svg>
                                 }
-                                <div className="jdetail" onClick={() => setID(val._id)}>
+                                <div className="jdetail" onClick={() => descContainer(val._id)}>
                                     view Details
                                 </div>
                             </div>
@@ -375,14 +382,14 @@ export const LandingPage = () => {
                 </div>
             </div>
             <div className="modal">
-                <div className="background">
+                <div className="background" style={bool ? {display: 'block'} : {display: 'none'}}>
                     <div className="modalContainer">
                         <div className="companyName">
                             Laravel Developer(Full Time) - Match Company Limited
                         </div>
                         <div className="modalbtns">
                             <div className="v_btn">
-                                View Company
+                                View Ministry
                             </div>
                             <div className="m_btn">
                                 Apply This Job
@@ -396,16 +403,17 @@ export const LandingPage = () => {
                                 Experience Length: 2 years
                             </div>
                             <div className="mfield">
-                                Location: San Francisco, USA
+                                Location: {description.jobLocation}
                             </div>
                             <div className="mfield">
-                                Application Deadline: 12/08/2022
+                                Application Deadline:{description.ApplicationDeadline}
                             </div>
                             <div className="mfield">
-                                Salary Range: $ 105,000 - 150,000
+                                Salary Range: ${description.SalaryRange}
                             </div>
 
                         </div>
+                        <button onClick={() => setBool(false)}>Close Modal</button>
                     </div>
                 </div>
             </div>
