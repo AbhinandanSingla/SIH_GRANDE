@@ -103,3 +103,21 @@ export const getBookmarks = gql`
         }
     }`
 
+export const getLocation1 = gql`
+    query getLocations($id:String!){
+        getLocation(id: $id){
+            _id,
+            jobTitle,
+            companyName,
+            companyID,
+            jobCategory,
+            jobLocation,
+            jobDescription,
+            ApplicationDeadline,
+            Qualifications,
+            Experience,
+            SalaryRange,
+            jobProfile,
+            jobType
+        }}
+`

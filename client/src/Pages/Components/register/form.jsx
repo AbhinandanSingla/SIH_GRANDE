@@ -37,6 +37,7 @@ export function Form() {
             qualification: []
         },
         onSubmit: (values) => {
+            setIsSubmitting(true)
             console.log(values)
             fetch("http://127.0.0.1:8080" + "/signup", {
                 method: "POST",
@@ -45,7 +46,6 @@ export function Form() {
                 body: JSON.stringify(values),
             })
                 .then(async response => {
-                    setIsSubmitting(false)
                     if (!response.ok) {
                         if (response.status === 400) {
                             setError("Please fill all the fields correctly!")
@@ -62,6 +62,7 @@ export function Form() {
                         // setUserContext(oldValues => {
                         //     return {...oldValues, ...data}
                         // })
+                        setIsSubmitting(true)
                         navigate('/');
                     }
                 })

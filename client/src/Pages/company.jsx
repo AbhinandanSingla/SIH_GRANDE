@@ -1,28 +1,30 @@
 import React from "react";
-import { useState } from "react";
-import { Navbar } from "./Components/company/navbar";
-import { Home } from "./Components/company/homeCompany";
-import { AddJob } from "./Components/company/addJob";
-import { Dashboard } from "./Components/company/dashboard";
+import {useState} from "react";
+import {Navbar} from "./Components/company/navbar";
+import {Home} from "./Components/company/homeCompany";
+import {AddJob} from "./grandfinale/addJob";
+import {Dashboard} from "./Components/company/dashboard";
+import {JobsList} from "./grandfinale/jobList";
 
 export function Company() {
-  const [navRoute, setRoute] = useState(0);
+    const [navRoute, setRoute] = useState(0);
 
-  function changeRoute() {
-    switch (navRoute) {
-      case 0:
-        return <Dashboard />;
-      case 1:
-        return <AddJob />;
-      default:
-        return <Dashboard />;
+    function changeRoute() {
+        switch (navRoute) {
+            case 0:
+                return <Dashboard/>;
+            case 1:
+                return <AddJob/>;
+            default:
+                return <Dashboard/>;
+        }
     }
-  }
-  return (
-    <section>
-      <Navbar changeRoute={setRoute} navRoute={navRoute} />
-      <Home route={navRoute} />
-      {changeRoute()}
-    </section>
-  );
+
+    return (
+        <section>
+            <Navbar changeRoute={setRoute} navRoute={navRoute}/>
+            <Home route={navRoute}/>
+            {changeRoute()}
+        </section>
+    );
 }

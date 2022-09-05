@@ -40,13 +40,14 @@ export const Logincompany = () => {
                     } else {
                         setErrorMessages(genericErrorMessage)
                     }
+                    alert(genericErrorMessage)
                 } else {
-                    // const data = await response.json()
+                    const data1 = await response.json()
                     setUserContext(oldValues => {
-                        return {...oldValues, ...data, companyLogin: true}
+                        return {...oldValues, ...data, companyLogin: true, companyId: data1.companyId}
                     });
                     setIsSubmitted(true);
-                    navigate('/addJob');
+                    navigate('/company');
                 }
             })
             .catch(error => {

@@ -75,6 +75,7 @@ export const addJob = (req, res) => {
         res.send("Bad Request")
     }
     const Job = new job(req.body)
+    console.log(req.body)
     Job.save(Job).then(data => {
         company.findById(req.body.companyID).then(val => {
             val.Jobs.push(data._id)

@@ -61,3 +61,25 @@ export const getAppliedJobs = (ids) => {
         }
     })
 }
+export const getLocation = (ids) => {
+    return job.find({
+        'jobLocation': {
+            $in: ids
+        }
+    })
+}
+
+export const getSalary = (ids, salary, name) => {
+    return job.find({
+        'SalaryRange': {
+            $in: salary
+        }, 'jobLocation': {
+            $in: ids
+        }, 'jobTitle': {
+            $in: name
+        }
+
+
+    })
+}
+

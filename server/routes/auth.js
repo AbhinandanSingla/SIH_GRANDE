@@ -63,9 +63,9 @@ router.post("/login", (req, res, next) => {
     console.log(req.body)
     User.findOne({username: req.body.username}).then(val => {
         console.log(val);
-        bcrypt.compare(req.body.password, val.password).then(val => {
+        bcrypt.compare(req.body.password, val.password).then(va => {
             console.log("user is authorizeed")
-            res.send({id: val._id, status: true, username: val.username, city: val.city});
+            res.send({id: val._id, status: true, username: val.username, ...val});
         })
     })
 });
@@ -287,7 +287,7 @@ router.post("/company/login", (req, res, next) => {
     company.findOne({username: req.body.username}).then(val => {
         bcrypt.compare(req.body.password, val.password).then(val => {
             console.log("user is authorizeed")
-            res.send({id: val._id, status: true, username: val.username, companyName: val.companyName});
+            res.send({companyId: val._id, status: true, username: val.username, companyName: val.companyName});
         })
     })
 });

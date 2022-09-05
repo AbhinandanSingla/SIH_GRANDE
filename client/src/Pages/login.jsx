@@ -10,6 +10,7 @@ export function Login() {
     const [userContext, setUserContext] = useContext(UserContext)
 
     function formSubmitHandler(e) {
+        setIsSubmitted(true);
         const [uname, pass] = [document.forms[0].name.value, document.forms[0].password.value];
         e.preventDefault()
         console.log(uname)
@@ -32,11 +33,11 @@ export function Login() {
                     }
                 } else {
                     const data = await response.json()
+                    console.log(data)
                     setUserContext(oldValues => {
-                        return {...oldValues, userLogin: true, id: data.id}
+                        return {...oldValues, userLogin: true, id: data.id, ...data._doc}
                     });
-
-                    setIsSubmitted(true);
+                    setIsSubmitted(false);
                     navigate('/');
                 }
             })

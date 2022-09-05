@@ -1,7 +1,7 @@
 import './landingPage.css'
 import logo from '../../Assets/Images/common/logo.svg';
 import {useQuery} from "@apollo/client";
-import {getcompanyJob, getJob, getJobDescription, userAppliedJobs} from "../../graphql/queries";
+import {getcompanyJob, getJob, getJobDescription, getLocation1, userAppliedJobs} from "../../graphql/queries";
 import {useContext, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {UserContext} from "../../hooks/userContext";
@@ -11,11 +11,31 @@ import integratedValue from "../../hooks/distanceCalc";
 export const LandingPage = () => {
     const navigate = useNavigate();
     const {data} = useQuery(getJob)
+    const [locat, setLocat] = useState('');
+    const location1 = useQuery(getLocation1, {
+        variables: {
+            id: locat
+        }
+    })
+
+    const [sal, setSalary] = useState('')
+    const [filter, setFilter] = useState([])
     const [description, setDesc] = useState({})
     const [bool, setBool] = useState(false);
     const [userContext, setUserContext] = useContext(UserContext)
     const [bookmarkBool, setBookMark] = useState(false)
-    const [bo, setbo] = useState({})
+
+    function getLoactionR() {
+        console.log(locat)
+        location1.refetch({id: locat}).then((e) => setFilter(e.data.getLocation))
+    }
+
+    const [bo, setbo] = useState({
+        _25: ["63083157a896b5ad646606fc", "63083a14d9255410c25f03ce", "630835b2d3ae5ef987842b67"],
+        _50: ["63083191a896b5ad64660700"],
+        _75: ["630835c6dccb6e2bb08de650"],
+        _100: ["630836ffd9255410c25f03c6"],
+    })
     const desc = useQuery(getJobDescription, {
         variables: {
             id: '',
@@ -31,54 +51,56 @@ export const LandingPage = () => {
             ids: [],
         }
     });
+    useEffect(() => {
+        if (data) {
+            let a = data.jobList;
+            setFilter(a)
+        }
+
+    }, [data])
 
     function bookMarkSection() {
-        integratedValue('patiala', data.jobList).then(r => {
+        let r = bo;
+        applied.refetch({
+            ids: r._25
+        }).then(r => {
             console.log(r)
-            applied.refetch({
-                ids: r._25[0]
-            }).then(r => {
-                console.log(r)
-                setbo((e) => ({
-                    ...e,
-                    _25: r.data.appliedJobs,
-                }));
-                setBookMark(true)
-            })
-            applied.refetch({
-                ids: r._50[0]
-            }).then(r => {
-                console.log(r)
-                setbo((e) => ({
-                    ...e,
-                    _50: r.data.appliedJobs,
-                }));
-                setBookMark(true)
-            })
-            applied.refetch({
-                ids: r._75[0]
-            }).then(r => {
-                console.log(r)
-                setbo((e) => ({
-                    ...e,
-                    _75: r.data.appliedJobs,
-                }));
-                setBookMark(true)
-            })
-            applied.refetch({
-                ids: r._100[0]
-            }).then(r => {
-                console.log(r)
-                setbo((e) => ({
-                    ...e,
-                    _100: r.data.appliedJobs,
-                }));
-                setBookMark(true)
-            })
-
-
+            setbo((e) => ({
+                ...e,
+                _25: r.data.appliedJobs,
+            }));
+            setBookMark(true)
         })
-
+        applied.refetch({
+            ids: r._50
+        }).then(r => {
+            console.log(r)
+            setbo((e) => ({
+                ...e,
+                _50: r.data.appliedJobs,
+            }));
+            setBookMark(true)
+        })
+        applied.refetch({
+            ids: r._75
+        }).then(r => {
+            console.log(r)
+            setbo((e) => ({
+                ...e,
+                _75: r.data.appliedJobs,
+            }));
+            setBookMark(true)
+        })
+        applied.refetch({
+            ids: r._100
+        }).then(r => {
+            console.log(r)
+            setbo((e) => ({
+                ...e,
+                _100: r.data.appliedJobs,
+            }));
+            setBookMark(true)
+        })
     }
 
     function bookmark(val) {
@@ -111,14 +133,17 @@ export const LandingPage = () => {
                     <img src={logo} alt=""/>
                     Rozgar
                 </div>
-                <div className="nav_btns">
-                    <Link to={'/login'} className="nav_btn">
-                        Login
-                    </Link>
-                    <Link to={"/register"} className="nav_btn">
-                        Register
-                    </Link>
-                </div>
+                {userContext.userLogin ?
+                    <div className={'greeting'}>
+                        Hi {userContext.firstName}
+                    </div> : <div className="nav_btns">
+                        <Link to={'/login'} className="nav_btn">
+                            Login
+                        </Link>
+                        <Link to={"/register"} className="nav_btn">
+                            Register
+                        </Link>
+                    </div>}
             </div>
         </div>
         <div className="home">
@@ -174,7 +199,8 @@ export const LandingPage = () => {
                                     d="M11.8 1C8.93566 1 6.18864 2.13785 4.16325 4.16325C2.13785 6.18864 1 8.93566 1 11.8C1 14.3542 1.5427 16.0255 3.025 17.875L11.8 28L20.575 17.875C22.0573 16.0255 22.6 14.3542 22.6 11.8C22.6 8.93566 21.4621 6.18864 19.4368 4.16325C17.4114 2.13785 14.6643 1 11.8 1V1Z"
                                     stroke="#878787" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            <input type="text" placeholder={"Location"}/>
+                            <input type="text" placeholder={"Location"} onChange={(e) => setLocat(e.target.value)}
+                                   value={locat}/>
                         </div>
                         <div className="jsc_location">
                             <svg width="29" height="30" viewBox="0 0 29 30" fill="none"
@@ -191,10 +217,11 @@ export const LandingPage = () => {
                                 </defs>
                             </svg>
 
-                            <input type="text" placeholder={"Salary"}/>
+                            <input type="text" placeholder={"Salary"} onChange={(e) => setSalary(e.target.value)}
+                                   value={sal}/>
                         </div>
                     </div>
-                    <div className="jsc_search">Search</div>
+                    <div className="jsc_search" onClick={getLoactionR}>Search</div>
                 </div>
             </div>
         </div>
@@ -428,11 +455,11 @@ export const LandingPage = () => {
             <div className={'max_width'}>
                 <div className={'job_head'}>All popular listed jobs</div>
                 <div className={'job_navbts'}>
-                    <button>Job section</button>
+                    <button onClick={() => setBookMark(false)}>Job section</button>
                     <button onClick={bookMarkSection}>Bookmark section</button>
                 </div>
-                <div className="jobsContainer">
-                    {(data) ? data.jobList.map((val, index) => <div className="jobcard">
+                <div className="jobsContainer" style={!bookmarkBool ? {"display": "block"} : {"display": "none"}}>
+                    {(data) ? filter.map((val, index) => <div className="jobcard">
                             <div className={"dflex"}>
                                 <svg width="91" height="91" viewBox="0 0 91 91" fill="none"
                                      xmlns="http://www.w3.org/2000/svg">
@@ -514,367 +541,366 @@ export const LandingPage = () => {
                         </div>
                     ) : ''}
                 </div>
-
-                {/*<div className="jobsContainer" style={() => bookmarkBool ? {display: "Block"} : {display: "none"}}>*/}
-                {/*    <div className={compareStyle.matchSection}>*/}
-                {/*        <div className={compareStyle.m_line}/>*/}
-                {/*        <div className={compareStyle.matchContainer}>*/}
-                {/*            <span>100%</span> match!*/}
-                {/*        </div>*/}
-
-                {/*    </div>*/}
-                {/*    <div className="jobsContainer">*/}
-                {/*        {(bo) ? bo._100.map((val, index) => <div className="jobcard">*/}
-                {/*            <div className={"dflex"}>*/}
-                {/*                <svg width="91" height="91" viewBox="0 0 91 91" fill="none"*/}
-                {/*                     xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                    <circle cx="45.5" cy="45.5" r="45" fill="#6083FE" stroke="#6083FE"/>*/}
-                {/*                    <path*/}
-                {/*                        d="M58.1 27.9V51.8C58.1 55.5 57.05 58.35 54.95 60.35C52.8833 62.35 50.0833 63.35 46.55 63.35C42.85 63.35 39.8833 62.3 37.65 60.2C35.4167 58.1 34.3 55.1167 34.3 51.25H42.8C42.8 52.7167 43.1 53.8333 43.7 54.6C44.3 55.3333 45.1667 55.7 46.3 55.7C47.3333 55.7 48.1333 55.3667 48.7 54.7C49.2667 54.0333 49.55 53.0667 49.55 51.8V27.9H58.1Z"*/}
-                {/*                        fill="white"/>*/}
-                {/*                </svg>*/}
-                {/*                <div className="jobcardinfo">*/}
-                {/*                    <div className="job_org">*/}
-                {/*                        {val.companyName}*/}
-                {/*                    </div>*/}
-                {/*                    <div className="job_title">*/}
-                {/*                        {val.jobTitle}*/}
-                {/*                    </div>*/}
-                {/*                    <div className="job_ad">*/}
-                {/*                        <div className="j">*/}
-                {/*                            <svg width="21" height="20" viewBox="0 0 21 20" fill="none"*/}
-                {/*                                 xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                                <g clip-path="url(#clip0_1716_2522)">*/}
-                {/*                                    <path*/}
-                {/*                                        d="M17.6366 8.33301C17.6366 14.1663 10.078 19.1663 10.078 19.1663C10.078 19.1663 2.51953 14.1663 2.51953 8.33301C2.51953 6.34388 3.31587 4.43623 4.73337 3.02971C6.15086 1.62318 8.0734 0.833008 10.078 0.833008C12.0827 0.833008 14.0052 1.62318 15.4227 3.02971C16.8402 4.43623 17.6366 6.34388 17.6366 8.33301Z"*/}
-                {/*                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"*/}
-                {/*                                        stroke-linejoin="round"/>*/}
-                {/*                                    <path*/}
-                {/*                                        d="M10.0781 10.833C11.4696 10.833 12.5976 9.71372 12.5976 8.33301C12.5976 6.9523 11.4696 5.83301 10.0781 5.83301C8.68661 5.83301 7.55859 6.9523 7.55859 8.33301C7.55859 9.71372 8.68661 10.833 10.0781 10.833Z"*/}
-                {/*                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"*/}
-                {/*                                        stroke-linejoin="round"/>*/}
-                {/*                                </g>*/}
-                {/*                                <defs>*/}
-                {/*                                    <clipPath id="clip0_1716_2522">*/}
-                {/*                                        <rect width="20.156" height="20" fill="white"/>*/}
-                {/*                                    </clipPath>*/}
-                {/*                                </defs>*/}
-                {/*                            </svg>*/}
-                {/*                            {val.jobLocation}*/}
-                {/*                        </div>*/}
-                {/*                        <div className="j">*/}
-                {/*                            <svg width="22" height="21" viewBox="0 0 22 21" fill="none"*/}
-                {/*                                 xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                                <path*/}
-                {/*                                    d="M2.64551 14H5.29099C5.75874 14 6.20733 14.1844 6.53808 14.5126C6.86883 14.8408 7.05464 15.2859 7.05464 15.75V18.375M7.05464 2.625V5.25C7.05464 5.71413 6.86883 6.15925 6.53808 6.48744C6.20733 6.81563 5.75874 7 5.29099 7H2.64551L7.05464 2.625ZM18.5184 7H15.8729C15.4052 7 14.9566 6.81563 14.6258 6.48744C14.2951 6.15925 14.1092 5.71413 14.1092 5.25V2.625L18.5184 7ZM14.1092 18.375V15.75C14.1092 15.2859 14.2951 14.8408 14.6258 14.5126C14.9566 14.1844 15.4052 14 15.8729 14H18.5184L14.1092 18.375Z"*/}
-                {/*                                    stroke="#6083FE" stroke-width="2" stroke-linecap="round"*/}
-                {/*                                    stroke-linejoin="round"/>*/}
-                {/*                            </svg>*/}
-                {/*                            15 Posts Avaible*/}
-                {/*                        </div>*/}
-                {/*                        <div className="j">*/}
-                {/*                            ₹{val.SalaryRange}*/}
-                {/*                        </div>*/}
-                {/*                    </div>*/}
-                {/*                </div>*/}
-                {/*            </div>*/}
-                {/*            <div className="jrightcontainer">*/}
-                {/*                {*/}
-                {/*                    bookmarkList.includes(val._id) ?*/}
-                {/*                        <svg width="23" height="38" viewBox="0 0 23 38" fill="none"*/}
-                {/*                             xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                            <path d="M22 1H1V37L11.5 29.3944L22 37V1Z" fill="#6083FE" stroke="#6083FE"/>*/}
-                {/*                        </svg>*/}
-                {/*                        : <svg*/}
-                {/*                            onClick={() => bookmark(val)}*/}
-                {/*                            width="49"*/}
-                {/*                            height="56"*/}
-                {/*                            viewBox="0 0 49 56"*/}
-                {/*                            fill="none"*/}
-                {/*                            xmlns="http://www.w3.org/2000/svg"*/}
-                {/*                        >*/}
-                {/*                            <path*/}
-                {/*                                d="M35.1711 5.59998H13.8289C13.0206 5.60102 12.2456 5.96951 11.674 6.62461C11.1025 7.27971 10.7809 8.16792 10.78 9.09438V47.5328C10.78 47.8447 10.8529 48.1509 10.991 48.4196C11.1291 48.6883 11.3275 48.9098 11.5655 49.061C11.8035 49.2121 12.0725 49.2876 12.3445 49.2794C12.6165 49.2712 12.8817 49.1797 13.1124 49.0144L24.4987 40.8572L35.8876 49.0144C36.1184 49.1797 36.3835 49.2712 36.6556 49.2794C36.9276 49.2876 37.1966 49.2121 37.4346 49.061C37.6726 48.9098 37.871 48.6883 38.0091 48.4196C38.1472 48.1509 38.22 47.8447 38.22 47.5328V9.09438C38.2191 8.16792 37.8976 7.27971 37.326 6.62461C36.7544 5.96951 35.9795 5.60102 35.1711 5.59998ZM35.1711 44.3806L25.3065 37.3151C25.0642 37.1416 24.7842 37.0496 24.4985 37.0496C24.2128 37.0496 23.9328 37.1416 23.6905 37.3151L13.8289 44.3804V9.09438H35.1711V44.3806Z"*/}
-                {/*                                fill="#6083FE"*/}
-                {/*                            />*/}
-                {/*                        </svg>*/}
-                {/*                }*/}
-                {/*                <div className="jdetail" onClick={() => descContainer(val._id)}>*/}
-                {/*                    view Details*/}
-                {/*                </div>*/}
-                {/*            </div>*/}
-                {/*        </div>) : ''}*/}
-                {/*    </div>*/}
-
-                {/*    <div className={compareStyle.matchSection}>*/}
-                {/*        <div className={compareStyle.m_line}/>*/}
-                {/*        <div className={compareStyle.matchContainer}>*/}
-                {/*            <span>75%</span> match!*/}
-                {/*        </div>*/}
-
-                {/*    </div>*/}
-                {/*    <div className="jobsContainer">*/}
-                {/*        {(bo) ? bo._75.map((val, index) => <div className="jobcard">*/}
-                {/*            <div className={"dflex"}>*/}
-                {/*                <svg width="91" height="91" viewBox="0 0 91 91" fill="none"*/}
-                {/*                     xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                    <circle cx="45.5" cy="45.5" r="45" fill="#6083FE" stroke="#6083FE"/>*/}
-                {/*                    <path*/}
-                {/*                        d="M58.1 27.9V51.8C58.1 55.5 57.05 58.35 54.95 60.35C52.8833 62.35 50.0833 63.35 46.55 63.35C42.85 63.35 39.8833 62.3 37.65 60.2C35.4167 58.1 34.3 55.1167 34.3 51.25H42.8C42.8 52.7167 43.1 53.8333 43.7 54.6C44.3 55.3333 45.1667 55.7 46.3 55.7C47.3333 55.7 48.1333 55.3667 48.7 54.7C49.2667 54.0333 49.55 53.0667 49.55 51.8V27.9H58.1Z"*/}
-                {/*                        fill="white"/>*/}
-                {/*                </svg>*/}
-                {/*                <div className="jobcardinfo">*/}
-                {/*                    <div className="job_org">*/}
-                {/*                        {val.companyName}*/}
-                {/*                    </div>*/}
-                {/*                    <div className="job_title">*/}
-                {/*                        {val.jobTitle}*/}
-                {/*                    </div>*/}
-                {/*                    <div className="job_ad">*/}
-                {/*                        <div className="j">*/}
-                {/*                            <svg width="21" height="20" viewBox="0 0 21 20" fill="none"*/}
-                {/*                                 xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                                <g clip-path="url(#clip0_1716_2522)">*/}
-                {/*                                    <path*/}
-                {/*                                        d="M17.6366 8.33301C17.6366 14.1663 10.078 19.1663 10.078 19.1663C10.078 19.1663 2.51953 14.1663 2.51953 8.33301C2.51953 6.34388 3.31587 4.43623 4.73337 3.02971C6.15086 1.62318 8.0734 0.833008 10.078 0.833008C12.0827 0.833008 14.0052 1.62318 15.4227 3.02971C16.8402 4.43623 17.6366 6.34388 17.6366 8.33301Z"*/}
-                {/*                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"*/}
-                {/*                                        stroke-linejoin="round"/>*/}
-                {/*                                    <path*/}
-                {/*                                        d="M10.0781 10.833C11.4696 10.833 12.5976 9.71372 12.5976 8.33301C12.5976 6.9523 11.4696 5.83301 10.0781 5.83301C8.68661 5.83301 7.55859 6.9523 7.55859 8.33301C7.55859 9.71372 8.68661 10.833 10.0781 10.833Z"*/}
-                {/*                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"*/}
-                {/*                                        stroke-linejoin="round"/>*/}
-                {/*                                </g>*/}
-                {/*                                <defs>*/}
-                {/*                                    <clipPath id="clip0_1716_2522">*/}
-                {/*                                        <rect width="20.156" height="20" fill="white"/>*/}
-                {/*                                    </clipPath>*/}
-                {/*                                </defs>*/}
-                {/*                            </svg>*/}
-                {/*                            {val.jobLocation}*/}
-                {/*                        </div>*/}
-                {/*                        <div className="j">*/}
-                {/*                            <svg width="22" height="21" viewBox="0 0 22 21" fill="none"*/}
-                {/*                                 xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                                <path*/}
-                {/*                                    d="M2.64551 14H5.29099C5.75874 14 6.20733 14.1844 6.53808 14.5126C6.86883 14.8408 7.05464 15.2859 7.05464 15.75V18.375M7.05464 2.625V5.25C7.05464 5.71413 6.86883 6.15925 6.53808 6.48744C6.20733 6.81563 5.75874 7 5.29099 7H2.64551L7.05464 2.625ZM18.5184 7H15.8729C15.4052 7 14.9566 6.81563 14.6258 6.48744C14.2951 6.15925 14.1092 5.71413 14.1092 5.25V2.625L18.5184 7ZM14.1092 18.375V15.75C14.1092 15.2859 14.2951 14.8408 14.6258 14.5126C14.9566 14.1844 15.4052 14 15.8729 14H18.5184L14.1092 18.375Z"*/}
-                {/*                                    stroke="#6083FE" stroke-width="2" stroke-linecap="round"*/}
-                {/*                                    stroke-linejoin="round"/>*/}
-                {/*                            </svg>*/}
-                {/*                            15 Posts Avaible*/}
-                {/*                        </div>*/}
-                {/*                        <div className="j">*/}
-                {/*                            ₹{val.SalaryRange}*/}
-                {/*                        </div>*/}
-                {/*                    </div>*/}
-                {/*                </div>*/}
-                {/*            </div>*/}
-                {/*            <div className="jrightcontainer">*/}
-                {/*                {*/}
-                {/*                    bookmarkList.includes(val._id) ?*/}
-                {/*                        <svg width="23" height="38" viewBox="0 0 23 38" fill="none"*/}
-                {/*                             xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                            <path d="M22 1H1V37L11.5 29.3944L22 37V1Z" fill="#6083FE" stroke="#6083FE"/>*/}
-                {/*                        </svg>*/}
-                {/*                        : <svg*/}
-                {/*                            onClick={() => bookmark(val)}*/}
-                {/*                            width="49"*/}
-                {/*                            height="56"*/}
-                {/*                            viewBox="0 0 49 56"*/}
-                {/*                            fill="none"*/}
-                {/*                            xmlns="http://www.w3.org/2000/svg"*/}
-                {/*                        >*/}
-                {/*                            <path*/}
-                {/*                                d="M35.1711 5.59998H13.8289C13.0206 5.60102 12.2456 5.96951 11.674 6.62461C11.1025 7.27971 10.7809 8.16792 10.78 9.09438V47.5328C10.78 47.8447 10.8529 48.1509 10.991 48.4196C11.1291 48.6883 11.3275 48.9098 11.5655 49.061C11.8035 49.2121 12.0725 49.2876 12.3445 49.2794C12.6165 49.2712 12.8817 49.1797 13.1124 49.0144L24.4987 40.8572L35.8876 49.0144C36.1184 49.1797 36.3835 49.2712 36.6556 49.2794C36.9276 49.2876 37.1966 49.2121 37.4346 49.061C37.6726 48.9098 37.871 48.6883 38.0091 48.4196C38.1472 48.1509 38.22 47.8447 38.22 47.5328V9.09438C38.2191 8.16792 37.8976 7.27971 37.326 6.62461C36.7544 5.96951 35.9795 5.60102 35.1711 5.59998ZM35.1711 44.3806L25.3065 37.3151C25.0642 37.1416 24.7842 37.0496 24.4985 37.0496C24.2128 37.0496 23.9328 37.1416 23.6905 37.3151L13.8289 44.3804V9.09438H35.1711V44.3806Z"*/}
-                {/*                                fill="#6083FE"*/}
-                {/*                            />*/}
-                {/*                        </svg>*/}
-                {/*                }*/}
-                {/*                <div className="jdetail" onClick={() => descContainer(val._id)}>*/}
-                {/*                    view Details*/}
-                {/*                </div>*/}
-                {/*            </div>*/}
-                {/*        </div>) : ''}*/}
-                {/*    </div>*/}
-                {/*    <div className={compareStyle.matchSection}>*/}
-                {/*        <div className={compareStyle.m_line}/>*/}
-                {/*        <div className={compareStyle.matchContainer}>*/}
-                {/*            <span>50%</span> match!*/}
-                {/*        </div>*/}
-
-                {/*    </div>*/}
-                {/*    <div className="jobsContainer">*/}
-                {/*        {(bo) ? bo._50.map((val, index) => <div className="jobcard">*/}
-                {/*            <div className={"dflex"}>*/}
-                {/*                <svg width="91" height="91" viewBox="0 0 91 91" fill="none"*/}
-                {/*                     xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                    <circle cx="45.5" cy="45.5" r="45" fill="#6083FE" stroke="#6083FE"/>*/}
-                {/*                    <path*/}
-                {/*                        d="M58.1 27.9V51.8C58.1 55.5 57.05 58.35 54.95 60.35C52.8833 62.35 50.0833 63.35 46.55 63.35C42.85 63.35 39.8833 62.3 37.65 60.2C35.4167 58.1 34.3 55.1167 34.3 51.25H42.8C42.8 52.7167 43.1 53.8333 43.7 54.6C44.3 55.3333 45.1667 55.7 46.3 55.7C47.3333 55.7 48.1333 55.3667 48.7 54.7C49.2667 54.0333 49.55 53.0667 49.55 51.8V27.9H58.1Z"*/}
-                {/*                        fill="white"/>*/}
-                {/*                </svg>*/}
-                {/*                <div className="jobcardinfo">*/}
-                {/*                    <div className="job_org">*/}
-                {/*                        {val.companyName}*/}
-                {/*                    </div>*/}
-                {/*                    <div className="job_title">*/}
-                {/*                        {val.jobTitle}*/}
-                {/*                    </div>*/}
-                {/*                    <div className="job_ad">*/}
-                {/*                        <div className="j">*/}
-                {/*                            <svg width="21" height="20" viewBox="0 0 21 20" fill="none"*/}
-                {/*                                 xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                                <g clip-path="url(#clip0_1716_2522)">*/}
-                {/*                                    <path*/}
-                {/*                                        d="M17.6366 8.33301C17.6366 14.1663 10.078 19.1663 10.078 19.1663C10.078 19.1663 2.51953 14.1663 2.51953 8.33301C2.51953 6.34388 3.31587 4.43623 4.73337 3.02971C6.15086 1.62318 8.0734 0.833008 10.078 0.833008C12.0827 0.833008 14.0052 1.62318 15.4227 3.02971C16.8402 4.43623 17.6366 6.34388 17.6366 8.33301Z"*/}
-                {/*                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"*/}
-                {/*                                        stroke-linejoin="round"/>*/}
-                {/*                                    <path*/}
-                {/*                                        d="M10.0781 10.833C11.4696 10.833 12.5976 9.71372 12.5976 8.33301C12.5976 6.9523 11.4696 5.83301 10.0781 5.83301C8.68661 5.83301 7.55859 6.9523 7.55859 8.33301C7.55859 9.71372 8.68661 10.833 10.0781 10.833Z"*/}
-                {/*                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"*/}
-                {/*                                        stroke-linejoin="round"/>*/}
-                {/*                                </g>*/}
-                {/*                                <defs>*/}
-                {/*                                    <clipPath id="clip0_1716_2522">*/}
-                {/*                                        <rect width="20.156" height="20" fill="white"/>*/}
-                {/*                                    </clipPath>*/}
-                {/*                                </defs>*/}
-                {/*                            </svg>*/}
-                {/*                            {val.jobLocation}*/}
-                {/*                        </div>*/}
-                {/*                        <div className="j">*/}
-                {/*                            <svg width="22" height="21" viewBox="0 0 22 21" fill="none"*/}
-                {/*                                 xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                                <path*/}
-                {/*                                    d="M2.64551 14H5.29099C5.75874 14 6.20733 14.1844 6.53808 14.5126C6.86883 14.8408 7.05464 15.2859 7.05464 15.75V18.375M7.05464 2.625V5.25C7.05464 5.71413 6.86883 6.15925 6.53808 6.48744C6.20733 6.81563 5.75874 7 5.29099 7H2.64551L7.05464 2.625ZM18.5184 7H15.8729C15.4052 7 14.9566 6.81563 14.6258 6.48744C14.2951 6.15925 14.1092 5.71413 14.1092 5.25V2.625L18.5184 7ZM14.1092 18.375V15.75C14.1092 15.2859 14.2951 14.8408 14.6258 14.5126C14.9566 14.1844 15.4052 14 15.8729 14H18.5184L14.1092 18.375Z"*/}
-                {/*                                    stroke="#6083FE" stroke-width="2" stroke-linecap="round"*/}
-                {/*                                    stroke-linejoin="round"/>*/}
-                {/*                            </svg>*/}
-                {/*                            15 Posts Avaible*/}
-                {/*                        </div>*/}
-                {/*                        <div className="j">*/}
-                {/*                            ₹{val.SalaryRange}*/}
-                {/*                        </div>*/}
-                {/*                    </div>*/}
-                {/*                </div>*/}
-                {/*            </div>*/}
-                {/*            <div className="jrightcontainer">*/}
-                {/*                {*/}
-                {/*                    bookmarkList.includes(val._id) ?*/}
-                {/*                        <svg width="23" height="38" viewBox="0 0 23 38" fill="none"*/}
-                {/*                             xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                            <path d="M22 1H1V37L11.5 29.3944L22 37V1Z" fill="#6083FE" stroke="#6083FE"/>*/}
-                {/*                        </svg>*/}
-                {/*                        : <svg*/}
-                {/*                            onClick={() => bookmark(val)}*/}
-                {/*                            width="49"*/}
-                {/*                            height="56"*/}
-                {/*                            viewBox="0 0 49 56"*/}
-                {/*                            fill="none"*/}
-                {/*                            xmlns="http://www.w3.org/2000/svg"*/}
-                {/*                        >*/}
-                {/*                            <path*/}
-                {/*                                d="M35.1711 5.59998H13.8289C13.0206 5.60102 12.2456 5.96951 11.674 6.62461C11.1025 7.27971 10.7809 8.16792 10.78 9.09438V47.5328C10.78 47.8447 10.8529 48.1509 10.991 48.4196C11.1291 48.6883 11.3275 48.9098 11.5655 49.061C11.8035 49.2121 12.0725 49.2876 12.3445 49.2794C12.6165 49.2712 12.8817 49.1797 13.1124 49.0144L24.4987 40.8572L35.8876 49.0144C36.1184 49.1797 36.3835 49.2712 36.6556 49.2794C36.9276 49.2876 37.1966 49.2121 37.4346 49.061C37.6726 48.9098 37.871 48.6883 38.0091 48.4196C38.1472 48.1509 38.22 47.8447 38.22 47.5328V9.09438C38.2191 8.16792 37.8976 7.27971 37.326 6.62461C36.7544 5.96951 35.9795 5.60102 35.1711 5.59998ZM35.1711 44.3806L25.3065 37.3151C25.0642 37.1416 24.7842 37.0496 24.4985 37.0496C24.2128 37.0496 23.9328 37.1416 23.6905 37.3151L13.8289 44.3804V9.09438H35.1711V44.3806Z"*/}
-                {/*                                fill="#6083FE"*/}
-                {/*                            />*/}
-                {/*                        </svg>*/}
-                {/*                }*/}
-                {/*                <div className="jdetail" onClick={() => descContainer(val._id)}>*/}
-                {/*                    view Details*/}
-                {/*                </div>*/}
-                {/*            </div>*/}
-                {/*        </div>) : ''}*/}
-                {/*    </div>*/}
-                {/*    <div className={compareStyle.matchSection}>*/}
-                {/*        <div className={compareStyle.m_line}/>*/}
-                {/*        <div className={compareStyle.matchContainer}>*/}
-                {/*            <span>25%</span> match!*/}
-                {/*        </div>*/}
-
-                {/*    </div>*/}
-                {/*    <div className="jobsContainer">*/}
-                {/*        {(bo) ? bo._25.map((val, index) => <div className="jobcard">*/}
-                {/*            <div className={"dflex"}>*/}
-                {/*                <svg width="91" height="91" viewBox="0 0 91 91" fill="none"*/}
-                {/*                     xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                    <circle cx="45.5" cy="45.5" r="45" fill="#6083FE" stroke="#6083FE"/>*/}
-                {/*                    <path*/}
-                {/*                        d="M58.1 27.9V51.8C58.1 55.5 57.05 58.35 54.95 60.35C52.8833 62.35 50.0833 63.35 46.55 63.35C42.85 63.35 39.8833 62.3 37.65 60.2C35.4167 58.1 34.3 55.1167 34.3 51.25H42.8C42.8 52.7167 43.1 53.8333 43.7 54.6C44.3 55.3333 45.1667 55.7 46.3 55.7C47.3333 55.7 48.1333 55.3667 48.7 54.7C49.2667 54.0333 49.55 53.0667 49.55 51.8V27.9H58.1Z"*/}
-                {/*                        fill="white"/>*/}
-                {/*                </svg>*/}
-                {/*                <div className="jobcardinfo">*/}
-                {/*                    <div className="job_org">*/}
-                {/*                        {val.companyName}*/}
-                {/*                    </div>*/}
-                {/*                    <div className="job_title">*/}
-                {/*                        {val.jobTitle}*/}
-                {/*                    </div>*/}
-                {/*                    <div className="job_ad">*/}
-                {/*                        <div className="j">*/}
-                {/*                            <svg width="21" height="20" viewBox="0 0 21 20" fill="none"*/}
-                {/*                                 xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                                <g clip-path="url(#clip0_1716_2522)">*/}
-                {/*                                    <path*/}
-                {/*                                        d="M17.6366 8.33301C17.6366 14.1663 10.078 19.1663 10.078 19.1663C10.078 19.1663 2.51953 14.1663 2.51953 8.33301C2.51953 6.34388 3.31587 4.43623 4.73337 3.02971C6.15086 1.62318 8.0734 0.833008 10.078 0.833008C12.0827 0.833008 14.0052 1.62318 15.4227 3.02971C16.8402 4.43623 17.6366 6.34388 17.6366 8.33301Z"*/}
-                {/*                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"*/}
-                {/*                                        stroke-linejoin="round"/>*/}
-                {/*                                    <path*/}
-                {/*                                        d="M10.0781 10.833C11.4696 10.833 12.5976 9.71372 12.5976 8.33301C12.5976 6.9523 11.4696 5.83301 10.0781 5.83301C8.68661 5.83301 7.55859 6.9523 7.55859 8.33301C7.55859 9.71372 8.68661 10.833 10.0781 10.833Z"*/}
-                {/*                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"*/}
-                {/*                                        stroke-linejoin="round"/>*/}
-                {/*                                </g>*/}
-                {/*                                <defs>*/}
-                {/*                                    <clipPath id="clip0_1716_2522">*/}
-                {/*                                        <rect width="20.156" height="20" fill="white"/>*/}
-                {/*                                    </clipPath>*/}
-                {/*                                </defs>*/}
-                {/*                            </svg>*/}
-                {/*                            {val.jobLocation}*/}
-                {/*                        </div>*/}
-                {/*                        <div className="j">*/}
-                {/*                            <svg width="22" height="21" viewBox="0 0 22 21" fill="none"*/}
-                {/*                                 xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                                <path*/}
-                {/*                                    d="M2.64551 14H5.29099C5.75874 14 6.20733 14.1844 6.53808 14.5126C6.86883 14.8408 7.05464 15.2859 7.05464 15.75V18.375M7.05464 2.625V5.25C7.05464 5.71413 6.86883 6.15925 6.53808 6.48744C6.20733 6.81563 5.75874 7 5.29099 7H2.64551L7.05464 2.625ZM18.5184 7H15.8729C15.4052 7 14.9566 6.81563 14.6258 6.48744C14.2951 6.15925 14.1092 5.71413 14.1092 5.25V2.625L18.5184 7ZM14.1092 18.375V15.75C14.1092 15.2859 14.2951 14.8408 14.6258 14.5126C14.9566 14.1844 15.4052 14 15.8729 14H18.5184L14.1092 18.375Z"*/}
-                {/*                                    stroke="#6083FE" stroke-width="2" stroke-linecap="round"*/}
-                {/*                                    stroke-linejoin="round"/>*/}
-                {/*                            </svg>*/}
-                {/*                            15 Posts Avaible*/}
-                {/*                        </div>*/}
-                {/*                        <div className="j">*/}
-                {/*                            ₹{val.SalaryRange}*/}
-                {/*                        </div>*/}
-                {/*                    </div>*/}
-                {/*                </div>*/}
-                {/*            </div>*/}
-                {/*            <div className="jrightcontainer">*/}
-                {/*                {*/}
-                {/*                    bookmarkList.includes(val._id) ?*/}
-                {/*                        <svg width="23" height="38" viewBox="0 0 23 38" fill="none"*/}
-                {/*                             xmlns="http://www.w3.org/2000/svg">*/}
-                {/*                            <path d="M22 1H1V37L11.5 29.3944L22 37V1Z" fill="#6083FE" stroke="#6083FE"/>*/}
-                {/*                        </svg>*/}
-                {/*                        : <svg*/}
-                {/*                            onClick={() => bookmark(val)}*/}
-                {/*                            width="49"*/}
-                {/*                            height="56"*/}
-                {/*                            viewBox="0 0 49 56"*/}
-                {/*                            fill="none"*/}
-                {/*                            xmlns="http://www.w3.org/2000/svg"*/}
-                {/*                        >*/}
-                {/*                            <path*/}
-                {/*                                d="M35.1711 5.59998H13.8289C13.0206 5.60102 12.2456 5.96951 11.674 6.62461C11.1025 7.27971 10.7809 8.16792 10.78 9.09438V47.5328C10.78 47.8447 10.8529 48.1509 10.991 48.4196C11.1291 48.6883 11.3275 48.9098 11.5655 49.061C11.8035 49.2121 12.0725 49.2876 12.3445 49.2794C12.6165 49.2712 12.8817 49.1797 13.1124 49.0144L24.4987 40.8572L35.8876 49.0144C36.1184 49.1797 36.3835 49.2712 36.6556 49.2794C36.9276 49.2876 37.1966 49.2121 37.4346 49.061C37.6726 48.9098 37.871 48.6883 38.0091 48.4196C38.1472 48.1509 38.22 47.8447 38.22 47.5328V9.09438C38.2191 8.16792 37.8976 7.27971 37.326 6.62461C36.7544 5.96951 35.9795 5.60102 35.1711 5.59998ZM35.1711 44.3806L25.3065 37.3151C25.0642 37.1416 24.7842 37.0496 24.4985 37.0496C24.2128 37.0496 23.9328 37.1416 23.6905 37.3151L13.8289 44.3804V9.09438H35.1711V44.3806Z"*/}
-                {/*                                fill="#6083FE"*/}
-                {/*                            />*/}
-                {/*                        </svg>*/}
-                {/*                }*/}
-                {/*                <div className="jdetail" onClick={() => descContainer(val._id)}>*/}
-                {/*                    view Details*/}
-                {/*                </div>*/}
-                {/*            </div>*/}
-                {/*        </div>) : ''}*/}
-                {/*    </div>*/}
-
-                {/*</div>*/}
+                <div className="jobsContainer" style={bookmarkBool ? {"display": "block"} : {"display": "none"}}>
+                    <div className={compareStyle.matchSection}>
+                        <div className={compareStyle.m_line}/>
+                        <div className={compareStyle.matchContainer}>
+                            <span>100%</span> match!
+                        </div>
+                        {/**/}
+                    </div>
+                    <div className="jobsContainer">
+                        {(bo) ? bo._100.map((val, index) => <div className="jobcard">
+                            <div className={"dflex"}>
+                                <svg width="91" height="91" viewBox="0 0 91 91" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="45.5" cy="45.5" r="45" fill="#6083FE" stroke="#6083FE"/>
+                                    <path
+                                        d="M58.1 27.9V51.8C58.1 55.5 57.05 58.35 54.95 60.35C52.8833 62.35 50.0833 63.35 46.55 63.35C42.85 63.35 39.8833 62.3 37.65 60.2C35.4167 58.1 34.3 55.1167 34.3 51.25H42.8C42.8 52.7167 43.1 53.8333 43.7 54.6C44.3 55.3333 45.1667 55.7 46.3 55.7C47.3333 55.7 48.1333 55.3667 48.7 54.7C49.2667 54.0333 49.55 53.0667 49.55 51.8V27.9H58.1Z"
+                                        fill="white"/>
+                                </svg>
+                                <div className="jobcardinfo">
+                                    <div className="job_org">
+                                        {val.companyName}
+                                    </div>
+                                    <div className="job_title">
+                                        {val.jobTitle}
+                                    </div>
+                                    <div className="job_ad">
+                                        <div className="j">
+                                            <svg width="21" height="20" viewBox="0 0 21 20" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <g clip-path="url(#clip0_1716_2522)">
+                                                    <path
+                                                        d="M17.6366 8.33301C17.6366 14.1663 10.078 19.1663 10.078 19.1663C10.078 19.1663 2.51953 14.1663 2.51953 8.33301C2.51953 6.34388 3.31587 4.43623 4.73337 3.02971C6.15086 1.62318 8.0734 0.833008 10.078 0.833008C12.0827 0.833008 14.0052 1.62318 15.4227 3.02971C16.8402 4.43623 17.6366 6.34388 17.6366 8.33301Z"
+                                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"/>
+                                                    <path
+                                                        d="M10.0781 10.833C11.4696 10.833 12.5976 9.71372 12.5976 8.33301C12.5976 6.9523 11.4696 5.83301 10.0781 5.83301C8.68661 5.83301 7.55859 6.9523 7.55859 8.33301C7.55859 9.71372 8.68661 10.833 10.0781 10.833Z"
+                                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"/>
+                                                </g>
+                                                <defs>
+                                                    <clipPath id="clip0_1716_2522">
+                                                        <rect width="20.156" height="20" fill="white"/>
+                                                    </clipPath>
+                                                </defs>
+                                            </svg>
+                                            {val.jobLocation}
+                                        </div>
+                                        <div className="j">
+                                            <svg width="22" height="21" viewBox="0 0 22 21" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M2.64551 14H5.29099C5.75874 14 6.20733 14.1844 6.53808 14.5126C6.86883 14.8408 7.05464 15.2859 7.05464 15.75V18.375M7.05464 2.625V5.25C7.05464 5.71413 6.86883 6.15925 6.53808 6.48744C6.20733 6.81563 5.75874 7 5.29099 7H2.64551L7.05464 2.625ZM18.5184 7H15.8729C15.4052 7 14.9566 6.81563 14.6258 6.48744C14.2951 6.15925 14.1092 5.71413 14.1092 5.25V2.625L18.5184 7ZM14.1092 18.375V15.75C14.1092 15.2859 14.2951 14.8408 14.6258 14.5126C14.9566 14.1844 15.4052 14 15.8729 14H18.5184L14.1092 18.375Z"
+                                                    stroke="#6083FE" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round"/>
+                                            </svg>
+                                            15 Posts Avaible
+                                        </div>
+                                        <div className="j">
+                                            ₹{val.SalaryRange}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="jrightcontainer">
+                                {
+                                    bookmarkList.includes(val._id) ?
+                                        <svg width="23" height="38" viewBox="0 0 23 38" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M22 1H1V37L11.5 29.3944L22 37V1Z" fill="#6083FE" stroke="#6083FE"/>
+                                        </svg>
+                                        : <svg
+                                            onClick={() => bookmark(val)}
+                                            width="49"
+                                            height="56"
+                                            viewBox="0 0 49 56"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M35.1711 5.59998H13.8289C13.0206 5.60102 12.2456 5.96951 11.674 6.62461C11.1025 7.27971 10.7809 8.16792 10.78 9.09438V47.5328C10.78 47.8447 10.8529 48.1509 10.991 48.4196C11.1291 48.6883 11.3275 48.9098 11.5655 49.061C11.8035 49.2121 12.0725 49.2876 12.3445 49.2794C12.6165 49.2712 12.8817 49.1797 13.1124 49.0144L24.4987 40.8572L35.8876 49.0144C36.1184 49.1797 36.3835 49.2712 36.6556 49.2794C36.9276 49.2876 37.1966 49.2121 37.4346 49.061C37.6726 48.9098 37.871 48.6883 38.0091 48.4196C38.1472 48.1509 38.22 47.8447 38.22 47.5328V9.09438C38.2191 8.16792 37.8976 7.27971 37.326 6.62461C36.7544 5.96951 35.9795 5.60102 35.1711 5.59998ZM35.1711 44.3806L25.3065 37.3151C25.0642 37.1416 24.7842 37.0496 24.4985 37.0496C24.2128 37.0496 23.9328 37.1416 23.6905 37.3151L13.8289 44.3804V9.09438H35.1711V44.3806Z"
+                                                fill="#6083FE"
+                                            />
+                                        </svg>
+                                }
+                                <div className="jdetail" onClick={() => descContainer(val._id)}>
+                                    view Details
+                                </div>
+                            </div>
+                        </div>) : ''}
+                    </div>
+                    {/**/}
+                    <div className={compareStyle.matchSection}>
+                        <div className={compareStyle.m_line}/>
+                        <div className={compareStyle.matchContainer}>
+                            <span>75%</span> match!
+                        </div>
+                        {/**/}
+                    </div>
+                    <div className="jobsContainer">
+                        {(bo) ? bo._75.map((val, index) => <div className="jobcard">
+                            <div className={"dflex"}>
+                                <svg width="91" height="91" viewBox="0 0 91 91" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="45.5" cy="45.5" r="45" fill="#6083FE" stroke="#6083FE"/>
+                                    <path
+                                        d="M58.1 27.9V51.8C58.1 55.5 57.05 58.35 54.95 60.35C52.8833 62.35 50.0833 63.35 46.55 63.35C42.85 63.35 39.8833 62.3 37.65 60.2C35.4167 58.1 34.3 55.1167 34.3 51.25H42.8C42.8 52.7167 43.1 53.8333 43.7 54.6C44.3 55.3333 45.1667 55.7 46.3 55.7C47.3333 55.7 48.1333 55.3667 48.7 54.7C49.2667 54.0333 49.55 53.0667 49.55 51.8V27.9H58.1Z"
+                                        fill="white"/>
+                                </svg>
+                                <div className="jobcardinfo">
+                                    <div className="job_org">
+                                        {val.companyName}
+                                    </div>
+                                    <div className="job_title">
+                                        {val.jobTitle}
+                                    </div>
+                                    <div className="job_ad">
+                                        <div className="j">
+                                            <svg width="21" height="20" viewBox="0 0 21 20" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <g clip-path="url(#clip0_1716_2522)">
+                                                    <path
+                                                        d="M17.6366 8.33301C17.6366 14.1663 10.078 19.1663 10.078 19.1663C10.078 19.1663 2.51953 14.1663 2.51953 8.33301C2.51953 6.34388 3.31587 4.43623 4.73337 3.02971C6.15086 1.62318 8.0734 0.833008 10.078 0.833008C12.0827 0.833008 14.0052 1.62318 15.4227 3.02971C16.8402 4.43623 17.6366 6.34388 17.6366 8.33301Z"
+                                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"/>
+                                                    <path
+                                                        d="M10.0781 10.833C11.4696 10.833 12.5976 9.71372 12.5976 8.33301C12.5976 6.9523 11.4696 5.83301 10.0781 5.83301C8.68661 5.83301 7.55859 6.9523 7.55859 8.33301C7.55859 9.71372 8.68661 10.833 10.0781 10.833Z"
+                                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"/>
+                                                </g>
+                                                <defs>
+                                                    <clipPath id="clip0_1716_2522">
+                                                        <rect width="20.156" height="20" fill="white"/>
+                                                    </clipPath>
+                                                </defs>
+                                            </svg>
+                                            {val.jobLocation}
+                                        </div>
+                                        <div className="j">
+                                            <svg width="22" height="21" viewBox="0 0 22 21" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M2.64551 14H5.29099C5.75874 14 6.20733 14.1844 6.53808 14.5126C6.86883 14.8408 7.05464 15.2859 7.05464 15.75V18.375M7.05464 2.625V5.25C7.05464 5.71413 6.86883 6.15925 6.53808 6.48744C6.20733 6.81563 5.75874 7 5.29099 7H2.64551L7.05464 2.625ZM18.5184 7H15.8729C15.4052 7 14.9566 6.81563 14.6258 6.48744C14.2951 6.15925 14.1092 5.71413 14.1092 5.25V2.625L18.5184 7ZM14.1092 18.375V15.75C14.1092 15.2859 14.2951 14.8408 14.6258 14.5126C14.9566 14.1844 15.4052 14 15.8729 14H18.5184L14.1092 18.375Z"
+                                                    stroke="#6083FE" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round"/>
+                                            </svg>
+                                            15 Posts Avaible
+                                        </div>
+                                        <div className="j">
+                                            ₹{val.SalaryRange}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="jrightcontainer">
+                                {
+                                    bookmarkList.includes(val._id) ?
+                                        <svg width="23" height="38" viewBox="0 0 23 38" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M22 1H1V37L11.5 29.3944L22 37V1Z" fill="#6083FE" stroke="#6083FE"/>
+                                        </svg>
+                                        : <svg
+                                            onClick={() => bookmark(val)}
+                                            width="49"
+                                            height="56"
+                                            viewBox="0 0 49 56"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M35.1711 5.59998H13.8289C13.0206 5.60102 12.2456 5.96951 11.674 6.62461C11.1025 7.27971 10.7809 8.16792 10.78 9.09438V47.5328C10.78 47.8447 10.8529 48.1509 10.991 48.4196C11.1291 48.6883 11.3275 48.9098 11.5655 49.061C11.8035 49.2121 12.0725 49.2876 12.3445 49.2794C12.6165 49.2712 12.8817 49.1797 13.1124 49.0144L24.4987 40.8572L35.8876 49.0144C36.1184 49.1797 36.3835 49.2712 36.6556 49.2794C36.9276 49.2876 37.1966 49.2121 37.4346 49.061C37.6726 48.9098 37.871 48.6883 38.0091 48.4196C38.1472 48.1509 38.22 47.8447 38.22 47.5328V9.09438C38.2191 8.16792 37.8976 7.27971 37.326 6.62461C36.7544 5.96951 35.9795 5.60102 35.1711 5.59998ZM35.1711 44.3806L25.3065 37.3151C25.0642 37.1416 24.7842 37.0496 24.4985 37.0496C24.2128 37.0496 23.9328 37.1416 23.6905 37.3151L13.8289 44.3804V9.09438H35.1711V44.3806Z"
+                                                fill="#6083FE"
+                                            />
+                                        </svg>
+                                }
+                                <div className="jdetail" onClick={() => descContainer(val._id)}>
+                                    view Details
+                                </div>
+                            </div>
+                        </div>) : ''}
+                    </div>
+                    <div className={compareStyle.matchSection}>
+                        <div className={compareStyle.m_line}/>
+                        <div className={compareStyle.matchContainer}>
+                            <span>50%</span> match!
+                        </div>
+                        {/**/}
+                    </div>
+                    <div className="jobsContainer">
+                        {(bo) ? bo._50.map((val, index) => <div className="jobcard">
+                            <div className={"dflex"}>
+                                <svg width="91" height="91" viewBox="0 0 91 91" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="45.5" cy="45.5" r="45" fill="#6083FE" stroke="#6083FE"/>
+                                    <path
+                                        d="M58.1 27.9V51.8C58.1 55.5 57.05 58.35 54.95 60.35C52.8833 62.35 50.0833 63.35 46.55 63.35C42.85 63.35 39.8833 62.3 37.65 60.2C35.4167 58.1 34.3 55.1167 34.3 51.25H42.8C42.8 52.7167 43.1 53.8333 43.7 54.6C44.3 55.3333 45.1667 55.7 46.3 55.7C47.3333 55.7 48.1333 55.3667 48.7 54.7C49.2667 54.0333 49.55 53.0667 49.55 51.8V27.9H58.1Z"
+                                        fill="white"/>
+                                </svg>
+                                <div className="jobcardinfo">
+                                    <div className="job_org">
+                                        {val.companyName}
+                                    </div>
+                                    <div className="job_title">
+                                        {val.jobTitle}
+                                    </div>
+                                    <div className="job_ad">
+                                        <div className="j">
+                                            <svg width="21" height="20" viewBox="0 0 21 20" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <g clip-path="url(#clip0_1716_2522)">
+                                                    <path
+                                                        d="M17.6366 8.33301C17.6366 14.1663 10.078 19.1663 10.078 19.1663C10.078 19.1663 2.51953 14.1663 2.51953 8.33301C2.51953 6.34388 3.31587 4.43623 4.73337 3.02971C6.15086 1.62318 8.0734 0.833008 10.078 0.833008C12.0827 0.833008 14.0052 1.62318 15.4227 3.02971C16.8402 4.43623 17.6366 6.34388 17.6366 8.33301Z"
+                                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"/>
+                                                    <path
+                                                        d="M10.0781 10.833C11.4696 10.833 12.5976 9.71372 12.5976 8.33301C12.5976 6.9523 11.4696 5.83301 10.0781 5.83301C8.68661 5.83301 7.55859 6.9523 7.55859 8.33301C7.55859 9.71372 8.68661 10.833 10.0781 10.833Z"
+                                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"/>
+                                                </g>
+                                                <defs>
+                                                    <clipPath id="clip0_1716_2522">
+                                                        <rect width="20.156" height="20" fill="white"/>
+                                                    </clipPath>
+                                                </defs>
+                                            </svg>
+                                            {val.jobLocation}
+                                        </div>
+                                        <div className="j">
+                                            <svg width="22" height="21" viewBox="0 0 22 21" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M2.64551 14H5.29099C5.75874 14 6.20733 14.1844 6.53808 14.5126C6.86883 14.8408 7.05464 15.2859 7.05464 15.75V18.375M7.05464 2.625V5.25C7.05464 5.71413 6.86883 6.15925 6.53808 6.48744C6.20733 6.81563 5.75874 7 5.29099 7H2.64551L7.05464 2.625ZM18.5184 7H15.8729C15.4052 7 14.9566 6.81563 14.6258 6.48744C14.2951 6.15925 14.1092 5.71413 14.1092 5.25V2.625L18.5184 7ZM14.1092 18.375V15.75C14.1092 15.2859 14.2951 14.8408 14.6258 14.5126C14.9566 14.1844 15.4052 14 15.8729 14H18.5184L14.1092 18.375Z"
+                                                    stroke="#6083FE" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round"/>
+                                            </svg>
+                                            15 Posts Avaible
+                                        </div>
+                                        <div className="j">
+                                            ₹{val.SalaryRange}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="jrightcontainer">
+                                {
+                                    bookmarkList.includes(val._id) ?
+                                        <svg width="23" height="38" viewBox="0 0 23 38" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M22 1H1V37L11.5 29.3944L22 37V1Z" fill="#6083FE" stroke="#6083FE"/>
+                                        </svg>
+                                        : <svg
+                                            onClick={() => bookmark(val)}
+                                            width="49"
+                                            height="56"
+                                            viewBox="0 0 49 56"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M35.1711 5.59998H13.8289C13.0206 5.60102 12.2456 5.96951 11.674 6.62461C11.1025 7.27971 10.7809 8.16792 10.78 9.09438V47.5328C10.78 47.8447 10.8529 48.1509 10.991 48.4196C11.1291 48.6883 11.3275 48.9098 11.5655 49.061C11.8035 49.2121 12.0725 49.2876 12.3445 49.2794C12.6165 49.2712 12.8817 49.1797 13.1124 49.0144L24.4987 40.8572L35.8876 49.0144C36.1184 49.1797 36.3835 49.2712 36.6556 49.2794C36.9276 49.2876 37.1966 49.2121 37.4346 49.061C37.6726 48.9098 37.871 48.6883 38.0091 48.4196C38.1472 48.1509 38.22 47.8447 38.22 47.5328V9.09438C38.2191 8.16792 37.8976 7.27971 37.326 6.62461C36.7544 5.96951 35.9795 5.60102 35.1711 5.59998ZM35.1711 44.3806L25.3065 37.3151C25.0642 37.1416 24.7842 37.0496 24.4985 37.0496C24.2128 37.0496 23.9328 37.1416 23.6905 37.3151L13.8289 44.3804V9.09438H35.1711V44.3806Z"
+                                                fill="#6083FE"
+                                            />
+                                        </svg>
+                                }
+                                <div className="jdetail" onClick={() => descContainer(val._id)}>
+                                    view Details
+                                </div>
+                            </div>
+                        </div>) : ''}
+                    </div>
+                    <div className={compareStyle.matchSection}>
+                        <div className={compareStyle.m_line}/>
+                        <div className={compareStyle.matchContainer}>
+                            <span>25%</span> match!
+                        </div>
+                        {/**/}
+                    </div>
+                    <div className="jobsContainer">
+                        {(bo) ? bo._25.map((val, index) => <div className="jobcard">
+                            <div className={"dflex"}>
+                                <svg width="91" height="91" viewBox="0 0 91 91" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="45.5" cy="45.5" r="45" fill="#6083FE" stroke="#6083FE"/>
+                                    <path
+                                        d="M58.1 27.9V51.8C58.1 55.5 57.05 58.35 54.95 60.35C52.8833 62.35 50.0833 63.35 46.55 63.35C42.85 63.35 39.8833 62.3 37.65 60.2C35.4167 58.1 34.3 55.1167 34.3 51.25H42.8C42.8 52.7167 43.1 53.8333 43.7 54.6C44.3 55.3333 45.1667 55.7 46.3 55.7C47.3333 55.7 48.1333 55.3667 48.7 54.7C49.2667 54.0333 49.55 53.0667 49.55 51.8V27.9H58.1Z"
+                                        fill="white"/>
+                                </svg>
+                                <div className="jobcardinfo">
+                                    <div className="job_org">
+                                        {val.companyName}
+                                    </div>
+                                    <div className="job_title">
+                                        {val.jobTitle}
+                                    </div>
+                                    <div className="job_ad">
+                                        <div className="j">
+                                            <svg width="21" height="20" viewBox="0 0 21 20" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <g clip-path="url(#clip0_1716_2522)">
+                                                    <path
+                                                        d="M17.6366 8.33301C17.6366 14.1663 10.078 19.1663 10.078 19.1663C10.078 19.1663 2.51953 14.1663 2.51953 8.33301C2.51953 6.34388 3.31587 4.43623 4.73337 3.02971C6.15086 1.62318 8.0734 0.833008 10.078 0.833008C12.0827 0.833008 14.0052 1.62318 15.4227 3.02971C16.8402 4.43623 17.6366 6.34388 17.6366 8.33301Z"
+                                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"/>
+                                                    <path
+                                                        d="M10.0781 10.833C11.4696 10.833 12.5976 9.71372 12.5976 8.33301C12.5976 6.9523 11.4696 5.83301 10.0781 5.83301C8.68661 5.83301 7.55859 6.9523 7.55859 8.33301C7.55859 9.71372 8.68661 10.833 10.0781 10.833Z"
+                                                        stroke="#6083FE" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"/>
+                                                </g>
+                                                <defs>
+                                                    <clipPath id="clip0_1716_2522">
+                                                        <rect width="20.156" height="20" fill="white"/>
+                                                    </clipPath>
+                                                </defs>
+                                            </svg>
+                                            {val.jobLocation}
+                                        </div>
+                                        <div className="j">
+                                            <svg width="22" height="21" viewBox="0 0 22 21" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M2.64551 14H5.29099C5.75874 14 6.20733 14.1844 6.53808 14.5126C6.86883 14.8408 7.05464 15.2859 7.05464 15.75V18.375M7.05464 2.625V5.25C7.05464 5.71413 6.86883 6.15925 6.53808 6.48744C6.20733 6.81563 5.75874 7 5.29099 7H2.64551L7.05464 2.625ZM18.5184 7H15.8729C15.4052 7 14.9566 6.81563 14.6258 6.48744C14.2951 6.15925 14.1092 5.71413 14.1092 5.25V2.625L18.5184 7ZM14.1092 18.375V15.75C14.1092 15.2859 14.2951 14.8408 14.6258 14.5126C14.9566 14.1844 15.4052 14 15.8729 14H18.5184L14.1092 18.375Z"
+                                                    stroke="#6083FE" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round"/>
+                                            </svg>
+                                            15 Posts Avaible
+                                        </div>
+                                        <div className="j">
+                                            ₹{val.SalaryRange}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="jrightcontainer">
+                                {
+                                    bookmarkList.includes(val._id) ?
+                                        <svg width="23" height="38" viewBox="0 0 23 38" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M22 1H1V37L11.5 29.3944L22 37V1Z" fill="#6083FE" stroke="#6083FE"/>
+                                        </svg>
+                                        : <svg
+                                            onClick={() => bookmark(val)}
+                                            width="49"
+                                            height="56"
+                                            viewBox="0 0 49 56"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M35.1711 5.59998H13.8289C13.0206 5.60102 12.2456 5.96951 11.674 6.62461C11.1025 7.27971 10.7809 8.16792 10.78 9.09438V47.5328C10.78 47.8447 10.8529 48.1509 10.991 48.4196C11.1291 48.6883 11.3275 48.9098 11.5655 49.061C11.8035 49.2121 12.0725 49.2876 12.3445 49.2794C12.6165 49.2712 12.8817 49.1797 13.1124 49.0144L24.4987 40.8572L35.8876 49.0144C36.1184 49.1797 36.3835 49.2712 36.6556 49.2794C36.9276 49.2876 37.1966 49.2121 37.4346 49.061C37.6726 48.9098 37.871 48.6883 38.0091 48.4196C38.1472 48.1509 38.22 47.8447 38.22 47.5328V9.09438C38.2191 8.16792 37.8976 7.27971 37.326 6.62461C36.7544 5.96951 35.9795 5.60102 35.1711 5.59998ZM35.1711 44.3806L25.3065 37.3151C25.0642 37.1416 24.7842 37.0496 24.4985 37.0496C24.2128 37.0496 23.9328 37.1416 23.6905 37.3151L13.8289 44.3804V9.09438H35.1711V44.3806Z"
+                                                fill="#6083FE"
+                                            />
+                                        </svg>
+                                }
+                                <div className="jdetail" onClick={() => descContainer(val._id)}>
+                                    view Details
+                                </div>
+                            </div>
+                        </div>) : ''}
+                    </div>
+                    {/**/}
+                </div>
                 <div className="viewMore">
                     View More
                 </div>
@@ -908,6 +934,9 @@ export const LandingPage = () => {
                             </div>
                             <div className="mfield">
                                 Salary Range: ${description.SalaryRange}
+                            </div>
+                            <div className="mfield">
+                                Job Description: ${description.jobDescription}
                             </div>
 
                         </div>

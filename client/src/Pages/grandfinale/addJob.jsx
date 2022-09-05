@@ -1,9 +1,18 @@
-import React from "react";
+import React, {useContext} from "react";
 import companyModule from "./company.module.css";
 import {useState} from "react";
 import {useFormik} from "formik";
+import {DataContext} from "../../hooks/ResumeData";
+import {useNavigate} from "react-router-dom";
+import logo from '../../Assets/Images/common/logo.svg'
 
 export const AddJob = () => {
+    const {
+        userDataProvider, setUserData
+    }
+        = useContext(DataContext);
+    const [bool, setbool] = useState(false)
+    const navigate = useNavigate();
     const uploadImage = (e) => {
         e.preventDefault();
         document.getElementById("profileImg").click();
@@ -31,31 +40,40 @@ export const AddJob = () => {
             jobType: "",
             jobDescription: "",
             ApplicationDeadline: "",
-            Experience: "",
+            experience: "",
             SalaryRange: "",
             numberApplicants: 999,
             postDate: new Date(),
             additionalLinks: "",
             jobProfile:
                 "https://firebasestorage.googleapis.com/v0/b/personaltestingbase.appspot.com/o/images%2F152137-laptops-review-apple-macbook-pro-2020-review-image1-pbzm4ejvvs.jpg?alt=media&token=c74f7add-6c9b-47f6-98ce-db59d4cbf340",
-            companyName: "samsung",
+            companyName: userDataProvider.companyName,
         },
         onSubmit: (values) => {
+            setbool(true)
             console.log(values);
             console.log(serviceList);
+            setUserData((e) => ({
+                ...e, jobs: [...e.jobs, values]
+            }))
             fetch("http://127.0.0.1:8080/api/addJob", {
                 method: "POST",
                 credentials: "include",
                 headers: {"Content-Type": "application/json", 'Origin': 'http://localhost:3000'},
-                body: JSON.stringify({...values, Qualifications: serviceList})
+                body: JSON.stringify({...values, skills: Object.values(value), Qualifications: serviceList}),
             })
                 .then(async response => {
+
+
                     if (!response.ok) {
                         if (response.status === 400) {
                         } else if (response.status === 401) {
                         } else {
                         }
                     } else {
+                        setbool(false)
+                        alert("Job is added")
+                        formik.values = {}
                         console.log(response)
                         console.log("Job added")
                     }
@@ -99,27 +117,27 @@ export const AddJob = () => {
                     <div className={companyModule.photoDiv}>
                         <img src={file.preview} alt=""/>
                     </div>
-                    {/* <div className={companyModule.photoRightSide}>
-            <div>
-              <p>select your company profile pic</p>
-            </div>
-            <div className={companyModule.browseBtnDiv}>
-              <button className={companyModule.browseBtn} onClick={uploadImage}>
-                Browse
-              </button>
-              <input
-                onChange={(e) =>
-                  setFile({
-                    preview: URL.createObjectURL(e.target.files[0]),
-                    raw: e.target.files[0],
-                  })
-                }
-                id={"profileImg"}
-                type="file"
-                style={{ display: "none" }}
-              />
-            </div>
-          </div> */}
+                    <div className={companyModule.photoRightSide}>
+                        <div>
+                            <p>select your job JPEG</p>
+                        </div>
+                        <div className={companyModule.browseBtnDiv}>
+                            <button className={companyModule.browseBtn} onClick={uploadImage}>
+                                Browse
+                            </button>
+                            <input
+                                onChange={(e) =>
+                                    setFile({
+                                        preview: URL.createObjectURL(e.target.files[0]),
+                                        raw: e.target.files[0],
+                                    })
+                                }
+                                id={"profileImg"}
+                                type="file"
+                                style={{display: "none"}}
+                            />
+                        </div>
+                    </div>
                 </div>
                 <div className={companyModule.postJobInputs}>
                     <div className={companyModule.jobInputDiv1}>
@@ -136,11 +154,10 @@ export const AddJob = () => {
                             />
                         </div>
                         <div>
-                            <p className={companyModule.jobInputHeading}>Job location</p>
+                            <p className={companyModule.jobInputHeading}>Job Location</p>
                             <input
                                 type="text"
-                                id={"jobLocation"}
-                                placeholder="hyderabad"
+                                placeholder="Hydrabrad"
                                 value={formik.values.jobLocation}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
@@ -151,11 +168,11 @@ export const AddJob = () => {
 
                     <div className={companyModule.jobInputDiv2}>
                         <div>
-                            <p className={companyModule.jobInputHeading}>Job Category</p>
+                            <p className={companyModule.jobInputHeading}>Name of the organization</p>
                             <input
                                 type="text"
                                 id={"jobCategory"}
-                                placeholder="eg: Technical"
+                                placeholder="Rail Sector"
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 value={formik.values.jobCategory}
@@ -163,28 +180,22 @@ export const AddJob = () => {
                             />
                         </div>
                         <div>
-                            <div>
-                                <p className={companyModule.jobInputHeading}>
-                                    Number of applicants
-                                </p>
-                            </div>
-                            <div>
-                                <input
-                                    type="number"
-                                    placeholder="200"
-                                    id={"numberApplicants"}
-                                    value={formik.values.numberApplicants}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    className={companyModule.jobInputSmall}
-                                />
-                            </div>
+                            <p className={companyModule.jobInputHeading}>No of Experience</p>
+                            <input
+                                type="text"
+                                id={"experience"}
+                                placeholder="Ex 2"
+                                value={formik.values.experience}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                className={companyModule.jobInputSmall}
+                            />
                         </div>
                     </div>
 
                     <div className={companyModule.jobInputDiv3}>
                         <div>
-                            <p className={companyModule.jobInputHeading}>Additional links</p>
+                            <p className={companyModule.jobInputHeading}>Recruitment Link</p>
                             <input
                                 type="text"
                                 placeholder="Links"
@@ -198,20 +209,20 @@ export const AddJob = () => {
 
                         <div>
                             <div>
-                                <p className={companyModule.jobInputHeading}>Job Type</p>
+                                <p className={companyModule.jobInputHeading}>
+                                    Number of vacancy
+                                </p>
                             </div>
                             <div>
-                                <select
-                                    name="jobType"
-                                    id="jobType"
-                                    className={companyModule.jobInputSmall}
-                                    value={formik.values.jobType}
+                                <input
+                                    type="number"
+                                    placeholder="200"
+                                    id={"numberApplicants"}
+                                    value={formik.values.numberApplicants}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
-                                >
-                                    <option value="partTime">Part Time</option>
-                                    <option value="fullTime">Full Time</option>
-                                </select>
+                                    className={companyModule.jobInputSmall}
+                                />
                             </div>
                         </div>
                     </div>
@@ -338,7 +349,6 @@ export const AddJob = () => {
                                 />
                             </div>
                         </div>
-
 
                     </div>
 
