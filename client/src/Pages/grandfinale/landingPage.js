@@ -31,10 +31,10 @@ export const LandingPage = () => {
     }
 
     const [bo, setbo] = useState({
-        _25: ["63083157a896b5ad646606fc", "63083a14d9255410c25f03ce", "630835b2d3ae5ef987842b67"],
+        _25: ["63083157a896b5ad646606fc","63083191a896b5ad64660700"],
         _50: ["63083191a896b5ad64660700"],
-        _75: ["630835c6dccb6e2bb08de650"],
-        _100: ["630836ffd9255410c25f03c6"],
+        _75: ["63083954d9255410c25f03ca"],
+        _100: ["630835e3e00d98f288bfc971"],
     })
     const desc = useQuery(getJobDescription, {
         variables: {
